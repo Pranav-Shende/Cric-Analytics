@@ -1,0 +1,158 @@
+{% extends 'stats/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-4 pb-5">
+    
+    <nav class="mb-4">
+        <a href="{% url 'home' %}" class="text-decoration-none text-muted small fw-bold">
+            <i class="bi bi-chevron-left"></i> BACK TO SEARCH HUB
+        </a>
+    </nav>
+
+    <div class="card border-0 shadow-lg overflow-hidden mb-5 animate-fade-in" style="border-radius: 30px; background-color: var(--card-bg);">
+        <div class="row g-0 align-items-center">
+            <div class="col-md-4 text-center p-5" style="background: linear-gradient(135deg, var(--brand-navy) 0%, #2c5e8c 100%);">
+                <div class="position-relative mx-auto rounded-circle overflow-hidden shadow-lg mb-3" 
+                     style="width: 200px; height: 200px; border: 5px solid rgba(255,255,255,0.2);">
+                    {% if player.image %}
+                        <img src="{{ player.image.url }}" alt="{{ player.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    {% else %}
+                        <img src="/media/players/default.png" alt="Default Profile" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.8;">
+                    {% endif %}
+                </div>
+                <h2 class="text-white fw-bold mb-1">{{ player.name }}</h2>
+                <span class="badge bg-warning text-dark fw-bold px-3 py-2 text-uppercase">{{ player.country }}</span>
+            </div>
+            
+            <div class="col-md-8 p-5">
+                {% if ai_bio %}
+                <div class="ai-insight-box p-4 rounded-4 position-relative" style="background-color: var(--input-bg); border-left: 5px solid #ffc107;">
+                    <h5 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-stars"></i> AI Career Insight
+                    </h5>
+                    <p class="mb-0 fst-italic opacity-75" style="line-height: 1.8; color: var(--text-main);">
+                        "{{ ai_bio }}"
+                    </p>
+                </div>
+                {% else %}
+                <div class="text-center opacity-50">
+                    <i class="bi bi-info-circle display-4 mb-2"></i>
+                    <p>Detailed career biography coming soon.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 animate-fade-in" style="animation-delay: 0.2s;">
+        
+        <div class="col-lg-12">
+            <div class="card border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 20px; background-color: var(--card-bg);">
+                <div class="card-header border-0 bg-primary text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-🏏 me-2"></i> Batting Statistics</h5>
+                </div>
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="bg-body-tertiary">
+                        <tr class="small text-uppercase fw-bold text-muted">
+                            <th>Format</th><th>Matches</th><th>Runs</th><th>Average</th><th>Strike Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-main">
+                        {% for fmt in formats %}
+                        {% with s=batting_dict|get_item:fmt %}
+                        <tr>
+                            <td class="fw-bold">{{ fmt|upper }}</td>
+                            <td>{{ s.matches|default:"-" }}</td>
+                            <td class="fw-bold">{{ s.runs|default:"-" }}</td>
+                            <td class="text-success fw-bold">{{ s.average|default:"-" }}</td>
+                            <td>{{ s.strike_rate|default:"-" }}</td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm overflow-hidden h-100" style="border-radius: 20px; background-color: var(--card-bg);">
+                <div class="card-header border-0 bg-danger text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-target me-2"></i> Bowling Statistics</h5>
+                </div>
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="bg-body-tertiary">
+                        <tr class="small text-uppercase fw-bold text-muted">
+                            <th>Format</th><th>Wickets</th><th>Average</th><th>Economy</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-main">
+                        {% for fmt in formats %}
+                        {% with s=bowling_dict|get_item:fmt %}
+                        <tr>
+                            <td class="fw-bold">{{ fmt|upper }}</td>
+                            <td class="fw-bold">{{ s.wickets|default:"-" }}</td>
+                            <td>{{ s.average|default:"-" }}</td>
+                            <td class="text-danger fw-bold">{{ s.economy|default:"-" }}</td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card border-0 shadow-sm overflow-hidden h-100" style="border-radius: 20px; background-color: var(--card-bg);">
+                <div class="card-header border-0 bg-success text-white py-3">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-hand-index-thumb me-2"></i> Fielding</h5>
+                </div>
+                <table class="table table-hover align-middle mb-0 text-center">
+                    <thead class="bg-body-tertiary">
+                        <tr class="small text-uppercase fw-bold text-muted">
+                            <th>Format</th><th>Catches</th><th>Stumpings</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-main">
+                        {% for fmt in formats %}
+                        {% with s=fielding_dict|get_item:fmt %}
+                        <tr>
+                            <td class="fw-bold">{{ fmt|upper }}</td>
+                            <td class="fw-bold">{{ s.catch|default:"0" }}</td>
+                            <td>{{ s.stump_out|default:"0" }}</td>
+                        </tr>
+                        {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-main { color: var(--text-main); }
+    
+    .table thead th {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        padding: 15px;
+    }
+
+    .table tbody td {
+        padding: 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Animation */
+    .animate-fade-in {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}

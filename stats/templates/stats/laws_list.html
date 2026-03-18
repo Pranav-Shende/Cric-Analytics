@@ -1,0 +1,109 @@
+{% extends 'stats/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase" style="color: var(--brand-navy); letter-spacing: 1px;">Laws of Cricket</h2>
+        <p class="text-muted">Search by Law number or keyword (e.g., 'LBW' or 'Law 36')</p>
+        
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <div class="input-group input-group-lg shadow-sm">
+                    <span class="input-group-text border-end-0" style="background-color: var(--input-bg); border-color: var(--border-color);">
+                        <i class="bi bi-search text-primary"></i>
+                    </span>
+                    <input type="text" id="lawSearch" class="form-control border-start-0 ps-0" 
+                           placeholder="Search laws..." 
+                           style="background-color: var(--input-bg); color: var(--text-main); border-color: var(--border-color);">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="lawsGrid">
+        {% for law in laws %}
+        <div class="col-md-6 col-lg-4 law-card-item" data-title="{{ law.title|lower }}" data-no="{{ law.number }}">
+            <div class="card h-100 border-0 shadow-sm law-card" 
+                 style="cursor: pointer; border-bottom: 4px solid #f1c40f !important; background-color: var(--card-bg);"
+                 data-bs-toggle="modal" data-bs-target="#lawModal{{ law.id }}">
+                <div class="card-body p-4 text-center">
+                    <h4 class="fw-bold mb-2" style="color: var(--text-main);">{{ law.number }}. {{ law.title }}</h4>
+                    <p class="text-muted small mb-0">{{ law.summary|default:"Click to read full details"|truncatewords:15 }}</p>
+                    <div class="small fw-bold mt-3" style="color: var(--brand-navy);">Read Full Clauses <i class="bi bi-arrow-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="lawModal{{ law.id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: 15px; background-color: var(--card-bg); color: var(--text-main);">
+                    <div class="modal-header border-0" style="background-color: var(--input-bg);">
+                        <h5 class="modal-title fw-bold">Law {{ law.number }}: {{ law.title }}</h5>
+                        <button type="button" class="btn-close" data-bs-theme="dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4" style="max-height: 75vh; overflow-y: auto;">
+                        <div class="law-content">
+                            {% for sub in law.subsections.all %}
+                                <div class="mb-4 pb-3 border-bottom" style="border-color: var(--border-color) !important;">
+                                    <h6 class="fw-bold mb-2" style="color: var(--brand-navy);">
+                                        {{ sub.number }} {{ sub.title }}
+                                    </h6>
+                                    
+                                    <p class="mb-0" style="line-height: 1.7; text-align: justify; color: var(--text-main);">
+                                        {{ sub.content|linebreaksbr }}
+                                    </p>
+                                </div>
+                            {% empty %}
+                                <div class="text-center py-4">
+                                    <i class="bi bi-exclamation-circle text-warning display-4"></i>
+                                    <p class="text-muted mt-2">No clauses found for this law yet.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.getElementById('lawSearch').addEventListener('keyup', function() {
+        let filter = this.value.toLowerCase();
+        let cards = document.querySelectorAll('.law-card-item');
+
+        cards.forEach(card => {
+            let title = card.getAttribute('data-title');
+            let number = card.getAttribute('data-no');
+            if (title.includes(filter) || number.includes(filter)) {
+                card.style.display = "";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+</script>
+
+<style>
+    .law-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .law-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.2) !important;
+    }
+    /* Scrollbar styling for modals in Dark Mode */
+    [data-bs-theme="dark"] .modal-body::-webkit-scrollbar {
+        width: 8px;
+    }
+    [data-bs-theme="dark"] .modal-body::-webkit-scrollbar-track {
+        background: var(--page-bg);
+    }
+    [data-bs-theme="dark"] .modal-body::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 10px;
+    }
+</style>
+{% endblock %}

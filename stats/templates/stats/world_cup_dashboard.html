@@ -1,0 +1,16 @@
+{% extends 'stats/base.html' %}
+{% block content %}
+<h1>🏏 World Cup Live Insights</h1>
+<a href="{% url 'home' %}">← Back to Portal</a>
+<hr>
+
+{% if matches %}
+    <ul>
+    {% for match in matches %}
+        <li>{{ match.name }} - {{ match.status }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No live World Cup data available at the moment. We are using the API bridge to find the latest updates.</p>
+{% endif %}
+{% endblock %}

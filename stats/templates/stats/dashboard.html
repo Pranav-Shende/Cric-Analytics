@@ -1,0 +1,75 @@
+<h1>🏏 Cricket Dashboard</h1>
+
+<form method="GET">
+    <input type="text" name="q" placeholder="Search..." value="{{ query|default:'' }}">
+    <button type="submit">Search</button>
+</form>
+
+<hr>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+    
+   <section>
+    <h3>🌟 Top All-Rounders</h3>
+    <table border="1">
+        <tr><th>Name</th><th>Score</th></tr>
+        {% for p in top_all_rounders %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td>{{ p.all_rounder_score }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="2">No All-Rounder data found. Run load_allrounders!</td></tr>
+        {% endfor %}
+    </table>
+</section>
+
+<section>
+    <h3>📜 Laws & Subsections</h3>
+    {% for law in laws %}
+        <div style="margin-bottom: 15px;">
+            <strong>Law {{ law.number }}: {{ law.title }}</strong>
+            <ul>
+                {% for sub in law.subsections.all %}
+                    <li>{{ sub.number }}: {{ sub.content|truncatewords:15 }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% empty %}
+        <p>No laws found. Run load_laws!</p>
+    {% endfor %}
+</section>
+
+    <section>
+        <h3>🏏 Top Batters</h3>
+        <table border="1" width="100%">
+            <tr><th>Name</th><th>Runs</th></tr>
+            {% for s in top_batters %}
+            <tr><td>{{ s.player.name }}</td><td>{{ s.runs }}</td></tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <section>
+        <h3>🎯 Top Bowlers</h3>
+        <table border="1" width="100%">
+            <tr><th>Name</th><th>Wickets</th></tr>
+            {% for s in top_bowlers %}
+            <tr><td>{{ s.player.name }}</td><td>{{ s.wickets }}</td></tr>
+            {% endfor %}
+        </table>
+    </section>
+
+    <section>
+        <h3>🧤 Top Fielders</h3>
+        <table border="1" width="100%">
+            <tr><th>Name</th><th>Catches</th></tr>
+            {% for s in top_fielders %}
+            <tr><td>{{ s.player.name }}</td><td>{{ s.catch }}</td></tr>
+            {% endfor %}
+        </table>
+    </section>
+
+</div>
+
+<hr>

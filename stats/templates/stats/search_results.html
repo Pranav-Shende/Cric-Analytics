@@ -1,0 +1,90 @@
+{% extends 'stats/base.html' %}
+
+{% block content %}
+<div class="container mt-4 pb-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase animate-fade-in" style="color: var(--brand-navy); letter-spacing: 1px;">
+            <i class="bi bi-person-search me-2"></i>Search Results
+        </h2>
+        <p class="text-muted">Showing results for <span class="fw-bold text-dark-emphasis">"{{ query }}"</span></p>
+    </div>
+
+    {% if results %}
+        <div class="row g-4 justify-content-center">
+            {% for player in results %}
+            <div class="col-6 col-md-4 col-lg-3 animate-fade-in">
+                <div class="card h-100 border-0 shadow-sm hover-up text-center p-3 p-md-4" style="border-radius: 20px; background-color: var(--card-bg);">
+                    
+                    <div class="position-relative mx-auto mb-3 shadow-sm rounded-circle overflow-hidden" 
+                        style="width: 110px; height: 110px; border: 3px solid #ffffff; background: linear-gradient(180deg, #e9ecef 0%, #adb5bd 100%);">
+                        
+                        {% if player.image %}
+                            <img src="{{ player.image.url }}" alt="{{ player.name }}" 
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        {% else %}
+                            <img src="/static/images/default_player.png" alt="Default Profile" 
+                                style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.95) contrast(1.1);">
+                        {% endif %}
+                    </div>
+                    
+                    <h5 class="fw-bold mb-1 text-truncate" style="color: var(--text-main);">{{ player.name }}</h5>
+                    
+                    <div class="mt-auto">
+                        <a href="{% url 'player_profile' player.id %}" class="btn btn-primary rounded-pill w-100 fw-bold btn-sm py-2">
+                            View Profile <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 rounded-5 mt-4 animate-fade-in" 
+             style="border: 2px dashed var(--border-color); background-color: var(--input-bg);">
+            <i class="bi bi-person-x display-1 text-muted opacity-25"></i>
+            <h4 class="mt-3 fw-bold text-muted">No Matches Found</h4>
+            <p class="text-muted">We couldn't find any players named "{{ query }}".</p>
+            <a href="{% url 'home' %}" class="btn btn-warning rounded-pill px-4 mt-2 fw-bold">Try Different Name</a>
+        </div>
+    {% endif %}
+
+    <div class="text-center mt-5">
+        <a href="{% url 'home' %}" class="btn btn-link text-decoration-none text-muted small fw-bold">
+            <i class="bi bi-chevron-left me-1"></i> BACK TO SEARCH HUB
+        </a>
+    </div>
+</div>
+
+<style>
+    /* Premium Hover Animation */
+    .hover-up {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .hover-up:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.12) !important;
+    }
+    
+    [data-bs-theme="dark"] .hover-up:hover {
+        box-shadow: 0 15px 30px rgba(0,0,0,0.4) !important;
+    }
+
+    /* Page Entry Animation */
+    .animate-fade-in {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile-friendly text truncation */
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+</style>
+{% endblock %}

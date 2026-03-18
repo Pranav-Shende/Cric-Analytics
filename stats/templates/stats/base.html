@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cric-Analytics{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --brand-navy: #1a3a5a;
+            --brand-gold: #ffc107;
+            --page-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #212529;
+            --input-bg: #f1f3f5;
+        }
+
+        /* 🌙 Midnight Theme Override */
+        [data-bs-theme="dark"] {
+            --brand-navy: #3d8bfd; 
+            --page-bg: #0b0e11;
+            --card-bg: #161b22;
+            --text-main: #f0f6fc;
+            --input-bg: #0d1117;
+        }
+
+        body {
+            background-color: var(--page-bg);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Navbar remains Navy for branding consistency */
+        .navbar {
+            background-color: #1a3a5a !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .nav-link { color: rgba(255,255,255,0.8) !important; }
+        .nav-link:hover { color: var(--brand-gold) !important; }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* 🛠️ Fix for Searchable Selects (Choices.js) in Dark Mode */
+        [data-bs-theme="dark"] .choices__inner,
+        [data-bs-theme="dark"] .choices__list--dropdown {
+            background-color: var(--input-bg) !important;
+            color: white !important;
+            border: 1px solid #30363d !important;
+        }
+        [data-bs-theme="dark"] .choices__item--selectable.is-highlighted {
+            background-color: var(--brand-navy) !important;
+        }
+
+        #darkModeToggle {
+            font-size: 1.3rem;
+            transition: 0.3s;
+        }
+        #darkModeToggle:hover { transform: scale(1.1); }
+
+        footer {
+            background-color: #1a3a5a;
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg sticky-top mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-uppercase text-white" href="/">
+                <i class="bi bi-trophy-fill me-2 text-warning"></i>Cric-Analytics
+            </a>
+
+            <button class="navbar-toggler border-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="bi bi-house-door-fill me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/ranking/">Rankings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/compare/">Compare</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/dls/">DLS Calculator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/laws/">Laws</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/live/">Live-Score</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.hotstar.com/in/sports/cricket">Watch Live</a></li>
+                    
+                </ul>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-link nav-link px-3" id="darkModeToggle">
+                        <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-shrink-0">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container text-center">
+            <p class="mb-1 fw-bold text-uppercase">Cricket Analytics Hub</p>
+            <p class="small opacity-75">© 2026 Professional Cricket Insights. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const themeBtn = document.getElementById('darkModeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const htmlElement = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+
+        htmlElement.setAttribute('data-bs-theme', initialTheme);
+        updateUI(initialTheme);
+
+        themeBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateUI(newTheme);
+        });
+
+        function updateUI(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.replace('bi-moon-stars-fill', 'bi-sun-fill');
+                themeIcon.style.color = '#ffc107'; 
+            } else {
+                themeIcon.classList.replace('bi-sun-fill', 'bi-moon-stars-fill');
+                themeIcon.style.color = '#ffffff'; 
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<div class="card ranking-card shadow-lg overflow-hidden border-0">
+    <table class="table table-hover align-middle mb-0">
+        <thead>
+            <tr class="text-center">
+                <th style="width: 10%;">RANK</th>
+                <th class="text-start">PLAYER</th>
+                <th style="width: 25%;">COUNTRY</th>
+                <th style="width: 15%;">RATING</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in data %}
+            <tr class="text-center" style="border-bottom: 1px solid var(--border-color);">
+                <td><div class="pos-circle mx-auto">{{ p.pos }}</div></td>
+                
+                <td class="text-start fw-bold" style="color: var(--text-main); letter-spacing: 0.3px;">
+                    {{ p.player }}
+                </td>
+                
+                <td class="small fw-bold text-uppercase country-text">
+                    {{ p.team }}
+                </td>
+                
+                <td class="fw-bold {{ color }} fs-5" style="filter: saturate(1.5);">
+                    {{ p.rating }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center py-5" style="color: var(--text-main); opacity: 0.5;">
+                    <i class="bi bi-cloud-slash d-block mb-2 fs-2"></i>
+                    No data found for this format.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* Custom visibility logic for the "Clear Text" Country names */
+    .country-text {
+        color: var(--text-main);
+        opacity: 0.65; /* Makes it look "muted" but stays readable in Dark Mode */
+        letter-spacing: 1.2px;
+    }
+
+    /* Slight hover effect to boost visibility on the active row */
+    .table-hover tbody tr:hover .country-text {
+        opacity: 1;
+        transition: opacity 0.2s ease;
+    }
+
+    /* Fix for Table Header visibility in Dark Mode */
+    [data-bs-theme="dark"] .table thead th {
+        background-color: #0d1117 !important; /* Slightly darker than card for depth */
+        color: var(--brand-gold) !important; /* Makes headers pop in dark mode */
+    }
+
+    /* Ensure the "pos-circle" remains high-contrast */
+    .pos-circle {
+        background: var(--brand-gold) !important;
+        color: #000 !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+</style>

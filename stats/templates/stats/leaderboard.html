@@ -1,0 +1,41 @@
+{% extends 'stats/base.html' %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cricket Stats Leaderboard</title>
+</head>
+<body>
+    <h1>🏆 Top 10 International Run Scorers</h1>
+    <form method="GET" action="{% url 'home' %}">
+    <input type="text" name="search" placeholder="Search for a player..." value="{{ request.GET.search }}">
+    <button type="submit">Search</button>
+</form>
+<br>
+    <table border="1" cellpadding="10">
+        <thead>
+            <tr>
+                <th>Player Name</th>
+                <th>Format</th>
+                <th>Runs</th>
+                <th>Average</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in top_scorers %}
+            <tr>
+                <td>{{ stat.player.name }}</td>
+                <td>{{ stat.format }}</td>
+                <td>{{ stat.runs }}</td>
+                <td>{{ stat.average|default:"N/A" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No data found in the database.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+{% endblock %}

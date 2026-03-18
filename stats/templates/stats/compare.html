@@ -1,0 +1,197 @@
+{% extends 'stats/base.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+<div class="container mt-4 pb-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-uppercase" style="color: var(--brand-navy); letter-spacing: 2px;">
+            <i class="bi bi-person-lines-fill me-2"></i>Player Head-to-Head
+        </h2>
+        <p class="text-muted">Compare career statistics side-by-side</p>
+    </div>
+
+    <div class="card shadow-sm border-0 p-4 mb-5" style="border-radius: 15px; background-color: var(--card-bg);">
+        <form method="GET" class="row g-3 align-items-end justify-content-center">
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-uppercase text-muted">Player 1</label>
+                <div class="search-container">
+                    {{ form.player1 }}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small fw-bold text-uppercase text-muted">Format</label>
+                <select name="format" class="form-select border-0 py-2" style="height: 44px; background-color: var(--input-bg); color: var(--text-main);">
+                    <option value="odi" {% if selected_format == 'odi' %}selected{% endif %}>ODI</option>
+                    <option value="t20" {% if selected_format == 't20' or selected_format == 't20i' %}selected{% endif %}>T20I</option>
+                    <option value="test" {% if selected_format == 'test' %}selected{% endif %}>Test</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-uppercase text-muted">Player 2</label>
+                <div class="search-container">
+                    {{ form.player2 }}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm" style="height: 44px;">
+                    COMPARE
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if p1 and p2 %}
+        
+        {% if p1_batting or p2_batting %}
+        <div class="row justify-content-center mb-5 animate-fade-in">
+            <div class="col-lg-10">
+                <h6 class="text-center text-primary fw-bold text-uppercase mb-3">Batting Statistics</h6>
+                <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+                    <table class="table table-borderless align-middle mb-0 text-center h5">
+                        <thead style="background-color: var(--brand-navy); color: white;">
+                            <tr>
+                                <th style="width: 40%;">{{ p1.name }}</th>
+                                <th style="width: 20%;" class="text-warning">VS</th>
+                                <th style="width: 40%;">{{ p2.name }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-main">
+                            <tr class="bg-light">
+                                <td class="py-3">{{ p1_batting.matches|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Matches</td>
+                                <td class="py-3">{{ p2_batting.matches|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 fw-bold">{{ p1_batting.runs|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Total Runs</td>
+                                <td class="py-3 fw-bold">{{ p2_batting.runs|default:"-" }}</td>
+                            </tr>
+                            <tr class="bg-light">
+                                <td class="py-3 fw-bold">{{ p1_batting.average|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Average</td>
+                                <td class="py-3 fw-bold">{{ p2_batting.average|default:"-" }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if p1_bowling or p2_bowling %}
+        <div class="row justify-content-center mb-5 animate-fade-in">
+            <div class="col-lg-10">
+                <h6 class="text-center text-danger fw-bold text-uppercase mb-3">Bowling Statistics</h6>
+                <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+                    <table class="table table-borderless align-middle mb-0 text-center h5">
+                        <thead style="background-color: #dc3545; color: white;">
+                            <tr>
+                                <th style="width: 40%;">{{ p1.name }}</th>
+                                <th style="width: 20%;" class="text-warning">VS</th>
+                                <th style="width: 40%;">{{ p2.name }}</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-main">
+                            <tr class="bg-light">
+                                <td class="py-3">{{ p1_bowling.wickets|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Wickets</td>
+                                <td class="py-3">{{ p2_bowling.wickets|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 fw-bold">{{ p1_bowling.economy|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Economy</td>
+                                <td class="py-3 fw-bold">{{ p2_bowling.economy|default:"-" }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if p1_fielding or p2_fielding %}
+            <div class="row justify-content-center mb-5 animate-fade-in">
+                <div class="col-lg-10">
+                    <h6 class="text-center text-success fw-bold text-uppercase mb-3">Fielding & Keeping</h6>
+                    <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+                        <table class="table table-borderless align-middle mb-0 text-center h5">
+                            <thead style="background-color: #198754; color: white;">
+                                <tr>
+                                    <th style="width: 40%;">{{ p1.name }}</th>
+                                    <th style="width: 20%;" class="text-warning">VS</th>
+                                    <th style="width: 40%;">{{ p2.name }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-main">
+                                <tr class="bg-light">
+                                    <td class="py-3 fw-bold">{{ p1_fielding.catch|default:"0" }}</td>
+                                    <td class="small fw-bold text-muted text-uppercase">Catches</td>
+                                    <td class="py-3 fw-bold">{{ p2_fielding.catch|default:"0" }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3">{{ p1_fielding.stump_out|default:"0" }}</td>
+                                    <td class="small fw-bold text-muted text-uppercase">Stumpings</td>
+                                    <td class="py-3">{{ p2_fielding.stump_out|default:"0" }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+    {% else %}
+        <div class="text-center py-5 opacity-50">
+            <i class="bi bi-people-fill display-1"></i>
+            <p class="mt-3 fs-5">Select two players and click compare to see the head-to-head breakdown.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const choicesOptions = {
+            searchEnabled: true,
+            itemSelectText: '',
+            placeholder: true,
+            searchPlaceholderValue: 'Search player...',
+            shouldSort: false,
+        };
+        const p1 = document.querySelector('select[name="player1"]');
+        const p2 = document.querySelector('select[name="player2"]');
+        if(p1) new Choices(p1, choicesOptions);
+        if(p2) new Choices(p2, choicesOptions);
+    });
+</script>
+
+<style>
+    .choices__inner { 
+        background-color: var(--input-bg) !important; 
+        border: none !important; 
+        border-radius: 10px !important; 
+        color: var(--text-main) !important;
+        min-height: 44px;
+    }
+    .choices__input { background-color: transparent !important; color: var(--text-main) !important; }
+    .choices__list--dropdown { 
+        background-color: var(--card-bg) !important; 
+        color: var(--text-main) !important;
+        border: 1px solid var(--border-color) !important;
+    }
+    .choices__item--selectable.is-highlighted { 
+        background-color: #3d8bfd !important; 
+        color: #fff !important; 
+    }
+    
+    .text-main { color: var(--text-main); }
+    
+    .animate-fade-in {
+        animation: fadeInUp 0.5s ease-out forwards;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
