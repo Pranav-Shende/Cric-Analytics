@@ -141,7 +141,7 @@ API_KEY = os.getenv('CRICKET_API_KEY')
 # Change this:
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-ALLOWED_HOSTS = ['https://cric-analytics.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['cric-analytics.onrender.com', 'localhost', '127.0.0.1']
 
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
