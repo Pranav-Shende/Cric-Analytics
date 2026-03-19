@@ -7,4 +7,4 @@ pip install -r requirements.txt
 python manage.py collectstatic --noinput
 
 python manage.py migrate
-python manage.py loaddata cricket_data.json
+#python manage.py loaddata cricket_data.json
