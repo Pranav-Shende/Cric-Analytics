@@ -74,12 +74,12 @@ WSGI_APPLICATION = 'cricket_site.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -156,12 +156,28 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = ['https://cric-analytics.onrender.com']
 
 
+
+
 import dj_database_url
 import os
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'),
-        conn_max_age=600
+        # This tells Django: "Use the Render database if available, 
+        # otherwise use my local connection string."
+        default=os.getenv('DATABASE_URL', 'postgresql://postgres:pranav@localhost:5432/cricket_local')
     )
 }
+#
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'cricket_local',
+#         'USER': 'postgres',
+#         'PASSWORD': 'pranav',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
