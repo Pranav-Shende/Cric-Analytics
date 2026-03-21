@@ -33,11 +33,14 @@ class Command(BaseCommand):
                     player=player_obj,
                     format=row['format'],
                     defaults={
+                        'matches': int(row['mat']) if row['mat'] else 0,
                         'innings': int(row['inns']) if row.get('inns') else 0,
                         'catch': int(row['ct']) if row.get('ct') else 0.0,
                         'stump_out': int(row['st']) if row.get('st') else 0,
                         'dismisals': row['dis'] if row.get('dis') and row['dis'] != '-' else None,
                         'dismisals_per_inning': float(row['d/i']) if row.get('d/i') and row['d/i'] != '-' else None,
+                        'span':str(row.get('span')) if row.get('span') else '0',
+
                     }
                 )
                 count += 1

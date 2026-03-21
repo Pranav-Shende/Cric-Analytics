@@ -34,12 +34,19 @@ class Command(BaseCommand):
                     player=player_obj,
                     format=row['format'],
                     defaults={
+                        'matches': int(row['mat']) if row['mat'] else 0,
                         'innings': int(row['inns']) if row.get('inns') else 0,
                         'overs': float(row['overs']) if row.get('overs') else 0.0,
                         'wickets': int(row['wkts']) if row.get('wkts') else 0,
                         'average': float(row['ave']) if row.get('ave') and row['ave'] != '-' else None,
                         'economy': float(row['econ']) if row.get('econ') and row['econ'] != '-' else None,
-                        'best_bowling_figures': row['bbf'] if row.get('bbf') and row['bbf'] != '-' else None,
+                        'best_bowling_figures': row['bbi'] if row.get('bbi') and row['bbi'] != '-' else None,
+                        'balls':float(row['econ']) if row.get('econ') and row['econ'] != '-' else None,
+                        'runs': int(row['runs']) if row['runs'] else 0,
+                        'strike_rate': float(row['sr']) if row['sr'] and row['sr'] != '-' else None,
+                        'four_wic':int(row['4']) if row['4'] else 0,
+                        'five_wic':int(row['5']) if row['5'] else 0,
+                        'span':str(row.get('span')) if row.get('span') else '0',
                     }
                 )
                 count += 1

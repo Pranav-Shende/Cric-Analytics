@@ -34,16 +34,21 @@
                 </thead>
                 <tbody id="statsGrid">
                     {% for s in stats %}
-                    <tr class="player-item" data-format="{{ s.format|lower }}" style="display: none;">
+                    <tr class="player-item clickable-row" 
+                        data-href="{% url 'player_profile' s.player.id %}" 
+                        data-format="{{ s.format|lower }}"
+                        style="display: none; cursor: pointer;">
+                    
                         <td class="ps-4 fw-bold">
                             <i class="bi bi-person-fill text-secondary me-2"></i>
                             {{ s.player.name }}
                         </td>
                         <td><span class="badge bg-light text-dark border px-3">{{ s.format|upper }}</span></td>
-                        <td class="text-center">{{ s.innings}}</td>
+                        <td class="text-center">{{ s.innings|default:"0" }}</td>
                         <td class="text-center fw-bold text-danger">{{ s.wickets }}</td>
                         <td class="text-center">
                             {{ s.economy }}
+                            {# Logic to highlight good economy (under 4.5 for limited overs) #}
                             {% if s.economy < 4.5 and s.format|lower != 'test' %}
                                 <i class="bi bi-shield-check text-success ms-1" title="Highly Economical"></i>
                             {% endif %}
@@ -80,6 +85,7 @@
 
         rows.forEach(row => {
             const format = row.getAttribute('data-format') || "";
+            // Improved matching logic
             const matchesFormat = (formatVal === 'all' || format.includes(formatVal) || formatVal.includes(format));
 
             if (matchesFormat) {
@@ -95,6 +101,7 @@
             }
         });
 
+        // Button logic
         const totalMatches = Array.from(rows).filter(r => {
             const rFormat = r.getAttribute('data-format') || "";
             return (formatVal === 'all' || rFormat.includes(formatVal) || formatVal.includes(rFormat));
@@ -104,8 +111,21 @@
         document.getElementById('noResults').style.display = foundAny ? "none" : "block";
     }
 
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        updateDisplay();
+
+        // Handle clicking the row
+        document.getElementById('statsGrid').addEventListener('click', (e) => {
+            const row = e.target.closest('.clickable-row');
+            if (row) {
+                window.location.href = row.dataset.href;
+            }
+        });
+    });
+
     document.getElementById('formatFilter').addEventListener('change', () => {
-        visibleCount = 20;
+        visibleCount = 20; 
         updateDisplay();
     });
 
@@ -113,7 +133,5 @@
         visibleCount += increment;
         updateDisplay();
     });
-
-    document.addEventListener('DOMContentLoaded', updateDisplay);
 </script>
 {% endblock %}

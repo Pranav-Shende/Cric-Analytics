@@ -22,7 +22,6 @@
                     {% endif %}
                 </div>
                 <h2 class="text-white fw-bold mb-1">{{ player.name }}</h2>
-                <span class="badge bg-warning text-dark fw-bold px-3 py-2 text-uppercase">{{ player.country }}</span>
             </div>
             
             <div class="col-md-8 p-5">
@@ -55,7 +54,10 @@
                 <table class="table table-hover align-middle mb-0 text-center">
                     <thead class="bg-body-tertiary">
                         <tr class="small text-uppercase fw-bold text-muted">
-                            <th>Format</th><th>Matches</th><th>Runs</th><th>Average</th><th>Strike Rate</th>
+                            <th>Format</th><th>Span</th><th>Matches</th><th>Innings</th><th>Runs</th><th>Average</th>
+                            <th>Strike Rate</th><th>100</th><th>50</th><th>HIghest Score</th><th>4's</th><th>6's</th>
+                            <th>Not Out</th><th>Ducks</th>
+                            
                         </tr>
                     </thead>
                     <tbody class="text-main">
@@ -63,10 +65,20 @@
                         {% with s=batting_dict|get_item:fmt %}
                         <tr>
                             <td class="fw-bold">{{ fmt|upper }}</td>
+                            <td class="text-center fw-bold ">{{ s.span|default:"-"}}</td>
                             <td>{{ s.matches|default:"-" }}</td>
+                            <td class="text-center ">{{ s.innings|default:"-" }}</td>
                             <td class="fw-bold">{{ s.runs|default:"-" }}</td>
-                            <td class="text-success fw-bold">{{ s.average|default:"-" }}</td>
+                            <td class="text-primary fw-bold">{{ s.average|default:"-" }}</td>
                             <td>{{ s.strike_rate|default:"-" }}</td>
+                            <td class="text-center fw-bold ">{{ s.centuries|default:"-" }}</td>
+                        <td class="text-center fw-bold" >{{ s.half_centuries|default:"-" }}</td>
+                        <td class="text-center fw-bold ">{{ s.highest_score|default:"-" }}</td>
+                        <td class="text-center fw-bold ">{{ s.fours|default:"-" }}</td>
+                        <td class="text-center fw-bold ">{{ s.sixes|default:"-" }}</td>
+                        <td class="text-center fw-bold ">{{ s.not_out|default:"-" }}</td>
+                        <td class="text-center fw-bold ">{{ s.ducks|default:"-" }}</td>
+                        
                         </tr>
                         {% endwith %}
                         {% endfor %}
@@ -74,8 +86,10 @@
                 </table>
             </div>
         </div>
-
-        <div class="col-md-7">
+        <div class="col-lg-12">
+            <!-- <div class="card border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 20px; background-color: var(--card-bg);">
+                <div class="card-header border-0 bg-primary text-white py-3">
+        <div class="col-md-7"> -->
             <div class="card border-0 shadow-sm overflow-hidden h-100" style="border-radius: 20px; background-color: var(--card-bg);">
                 <div class="card-header border-0 bg-danger text-white py-3">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-target me-2"></i> Bowling Statistics</h5>
@@ -83,7 +97,9 @@
                 <table class="table table-hover align-middle mb-0 text-center">
                     <thead class="bg-body-tertiary">
                         <tr class="small text-uppercase fw-bold text-muted">
-                            <th>Format</th><th>Wickets</th><th>Average</th><th>Economy</th>
+                            <th>Format</th><th>Span</th><th>Matches</th><th>Innings</th><th>Wickets</th>
+                            <th>Average</th><th>Economy</th><th>Balls</th><th>Runs</th><th>Strike Rate</th>
+                            <th>4 wicket haul</th><th>Fifer</th>
                         </tr>
                     </thead>
                     <tbody class="text-main">
@@ -91,9 +107,17 @@
                         {% with s=bowling_dict|get_item:fmt %}
                         <tr>
                             <td class="fw-bold">{{ fmt|upper }}</td>
+                            <td class="text-center fw-bold ">{{ s.span|default:"-"}}</td>
+                            <td>{{ s.matches|default:"-" }}</td>
+                            <td class="text-center ">{{ s.innings|default:"-" }}</td>
                             <td class="fw-bold">{{ s.wickets|default:"-" }}</td>
                             <td>{{ s.average|default:"-" }}</td>
                             <td class="text-danger fw-bold">{{ s.economy|default:"-" }}</td>
+                            <td class="fw-bold">{{ s.balls|default:"-" }}</td>
+                            <td class="fw-bold">{{ s.runs|default:"-" }}</td>
+                            <td class="fw-bold">{{ s.strike_rate|default:"-" }}</td>
+                            <td class="fw-bold">{{ s.four_wic|default:"-" }}</td>
+                            <td class="fw-bold">{{ s.five_wic|default:"-" }}</td>
                         </tr>
                         {% endwith %}
                         {% endfor %}
@@ -102,15 +126,17 @@
             </div>
         </div>
 
-        <div class="col-md-5">
+        <div class="col-lg-12">
+        
             <div class="card border-0 shadow-sm overflow-hidden h-100" style="border-radius: 20px; background-color: var(--card-bg);">
                 <div class="card-header border-0 bg-success text-white py-3">
-                    <h5 class="mb-0 fw-bold"><i class="bi bi-hand-index-thumb me-2"></i> Fielding</h5>
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-target me-2"></i>Fielding Statistics</h5>
                 </div>
                 <table class="table table-hover align-middle mb-0 text-center">
                     <thead class="bg-body-tertiary">
                         <tr class="small text-uppercase fw-bold text-muted">
-                            <th>Format</th><th>Catches</th><th>Stumpings</th>
+                            <th>Format</th><th>Span</th><th>Matches</th><th>Innings</th>
+                            <th>Dismisals</th><th>Catches</th><th>Stumpings</th><th>Dismisals/Inning</th>
                         </tr>
                     </thead>
                     <tbody class="text-main">
@@ -118,8 +144,13 @@
                         {% with s=fielding_dict|get_item:fmt %}
                         <tr>
                             <td class="fw-bold">{{ fmt|upper }}</td>
-                            <td class="fw-bold">{{ s.catch|default:"0" }}</td>
-                            <td>{{ s.stump_out|default:"0" }}</td>
+                            <td class="text-center fw-bold ">{{ s.span|default:"-"}}</td>
+                            <td>{{ s.matches|default:"-" }}</td>
+                            <td class="text-center ">{{ s.innings|default:"-" }}</td>
+                            <td class="text-center ">{{ s.dismisals|default:"-" }}</td>
+                            <td class="fw-bold">{{ s.catch|default:"-" }}</td>
+                            <td class="text-center ">{{ s.stump_out|default:"0" }}</td>
+                            <td class="text-success fw-bold">{{ s.dismisals_per_inning|default:"-" }}</td>
                         </tr>
                         {% endwith %}
                         {% endfor %}

@@ -52,44 +52,101 @@ def worlcup_live_data(request):
 
     return render(request, 'stats/world_cup_dashboard.html', {'matches': world_cup_matches})
 
-
-def live_data(request):
-    # 4. Fetch the key from .env using the exact name you saved it as
-    api_key = os.getenv("CRICKET_API_KEY") 
+# For every match happening around the world
+# def live_data(request):
+#     # 4. Fetch the key from .env using the exact name you saved it as
+#     api_key = os.getenv("CRICKET_API_KEY") 
     
-    # 5. Build the URL using the variable
+#     # 5. Build the URL using the variable
+#     api_url = f"https://api.cricapi.com/v1/currentMatches?apikey={api_key}&offset=0"
+
+#     try:
+#         response = requests.get(api_url)
+#         data = response.json()
+#         all_matches = data.get('data', [])
+#     except Exception as e:
+#         print(f"Error fetching API: {e}")
+#         all_matches = []
+
+#     # ... rest of your logic stays exactly the same ...
+#     today = timezone.now().date().isoformat()
+#     today_matches = []
+#     # (Rest of your loop code here)
+#     for match in all_matches:
+#         match_date = match.get('dateTimeGMT') or match.get('date')
+        
+#         if match_date and match_date.startswith(today):
+#             # We extract the score list safely
+#             scores = match.get('score', [])
+            
+#             # Add helper keys to the match object to make HTML easier to read
+#             match['t1_name'] = match.get('teams', ['Team 1', ''])[0]
+#             match['t2_name'] = match.get('teams', ['', 'Team 2'])[1]
+            
+#             # Map scores if they exist
+#             match['t1_score'] = scores[0] if len(scores) > 0 else None
+#             match['t2_score'] = scores[1] if len(scores) > 1 else None
+            
+#             today_matches.append(match)
+
+#     return render(request, 'stats/live_score.html', {'matches': today_matches})
+
+# For only selected teams
+def live_data(request):
+    api_key = os.getenv("CRICKET_API_KEY") 
     api_url = f"https://api.cricapi.com/v1/currentMatches?apikey={api_key}&offset=0"
+
+    # 1. List of International Countries
+    INTERNATIONAL_TEAMS = [
+        "INDIA", "AUSTRALIA", "PAKISTAN", "ENGLAND", "SOUTH AFRICA", 
+        "NEW ZEALAND", "WEST INDIES", "SRI LANKA", "BANGLADESH", 
+        "AFGHANISTAN", "IRELAND", "ZIMBABWE", "NEPAL", "NETHERLANDS"
+    ]
+
+    # 2. List of Big League Teams (IPL, BBL, etc.)
+    LEAGUE_TEAMS = [
+         "Mumbai Indians","Chennai Super Kings","Royal Challengers Bangalore","Kolkata Knight Riders",
+         "Gujarat Titans","Rajasthan Royals","Lucknow Super Giants","Delhi Capitals","Punjab Kings",
+         "Sunrisers Hyderabad","Adelaide Strikers","Brisbane Heat","Hobart Hurricanes","Melbourne Renegades",
+         "Melbourne Stars","Perth Scorchers","Sydney Sixers","Sydney Thunders"# Add more teams here
+    ]
 
     try:
         response = requests.get(api_url)
         data = response.json()
         all_matches = data.get('data', [])
     except Exception as e:
-        print(f"Error fetching API: {e}")
         all_matches = []
 
-    # ... rest of your logic stays exactly the same ...
     today = timezone.now().date().isoformat()
-    today_matches = []
-    # (Rest of your loop code here)
+    filtered_matches = []
+
     for match in all_matches:
         match_date = match.get('dateTimeGMT') or match.get('date')
         
-        if match_date and match_date.startswith(today):
-            # We extract the score list safely
-            scores = match.get('score', [])
-            
-            # Add helper keys to the match object to make HTML easier to read
-            match['t1_name'] = match.get('teams', ['Team 1', ''])[0]
-            match['t2_name'] = match.get('teams', ['', 'Team 2'])[1]
-            
-            # Map scores if they exist
-            match['t1_score'] = scores[0] if len(scores) > 0 else None
-            match['t2_score'] = scores[1] if len(scores) > 1 else None
-            
-            today_matches.append(match)
+        # Extract team names from the match name (e.g., "India vs Australia")
+        # or from the 'teams' list if the API provides it.
+        teams_list = match.get('teams', [])
+        t1 = teams_list[0].upper() if len(teams_list) > 0 else ""
+        t2 = teams_list[1].upper() if len(teams_list) > 1 else ""
 
-    return render(request, 'stats/live_score.html', {'matches': today_matches})
+        if match_date and match_date.startswith(today):
+            
+            # Check if EITHER team is an International team OR a Big League team
+            is_international = any(team in t1 or team in t2 for team in INTERNATIONAL_TEAMS)
+            is_league = any(team in t1 or team in t2 for team in LEAGUE_TEAMS)
+
+            if is_international or is_league:
+                scores = match.get('score', [])
+                match['t1_name'] = t1.title() # Convert back to 'India' from 'INDIA'
+                match['t2_name'] = t2.title()
+                
+                match['t1_score'] = scores[0] if len(scores) > 0 else None
+                match['t2_score'] = scores[1] if len(scores) > 1 else None
+                
+                filtered_matches.append(match)
+
+    return render(request, 'stats/live_score.html', {'matches': filtered_matches})
 
 ## Not working
 # def official_rankings_view(request):
@@ -152,14 +209,6 @@ def player_profile(request, player_id):
     bowling_dict = {s.format: s for s in BowlingStat.objects.filter(player=player)}
     fielding_dict = {s.format: s for s in FieldingStat.objects.filter(player=player)}
     
-    # context = {
-    #     'player': player,
-    #     'formats': formats,
-    #     'batting_dict': batting_dict,
-    #     'bowling_dict': bowling_dict,
-    #     'fielding_dict': fielding_dict,
-    # }
-    # return render(request, 'stats/player_profile.html', context)
     return render(request, 'stats/player_profile.html', {
         'player': player,
         'ai_bio': player.ai_bio,
@@ -170,31 +219,12 @@ def player_profile(request, player_id):
     })
 
 
-# def player_profile(request, player_id):
-#     # Fetch the player or show 404 if not found
-#     player = get_object_or_404(Player, id=player_id)
-    
-#     # Fetch all stats related to this player
-#     batting = BattingStat.objects.filter(player=player)
-#     bowling = BowlingStat.objects.filter(player=player)
-#     fielding = FieldingStat.objects.filter(player=player)
-
-#     context = {
-#         'player': player,
-#         'batting_stats': batting,
-#         'bowling_stats': bowling,
-#         'fielding_stats': fielding,
-#     }
-#     return render(request, 'stats/player_profile.html', context)
-
 # 1. The Home Page (The Hub)
 def home(request):
     return render(request, 'stats/home.html')
 
 # 2. Batsmen Page
-# def batsmen_list(request):
-#     top_batters = BattingStat.objects.order_by('-runs')
-#     return render(request, 'stats/batsmen.html', {'batters': top_batters})
+
 def batsmen_list(request):
     # Fetch stats instead of players so we have the 'format' field
     batsmen_stats = BattingStat.objects.select_related('player').all().order_by('-runs')
@@ -220,71 +250,6 @@ def laws_list(request):
     laws = Law.objects.prefetch_related('subsections').all().order_by('number')
     return render(request, 'stats/laws_list.html', {'laws': laws})
 
-
-
-# def compare_players(request):
-#     p1 = None
-#     p2 = None
-#     p1_stats = None
-#     p2_stats = None
-    
-#     # Check for both players and a format (defaulting to ODI)
-#     form = ComparePlayersForm(request.GET or None)
-#     selected_format = request.GET.get('format', 'odi').lower()
-
-#     if form.is_valid():
-#         p1 = form.cleaned_data['player1']
-#         p2 = form.cleaned_data['player2']
-        
-#         # Fetch the BattingStat for each player in the selected format
-#         p1_stats = BattingStat.objects.filter(player=p1, format=selected_format).first()
-#         p2_stats = BattingStat.objects.filter(player=p2, format=selected_format).first()
-
-#     return render(request, 'stats/compare.html', {
-#         'form': form,
-#         'p1': p1, 
-#         'p2': p2,
-#         'p1_stats': p1_stats,
-#         'p2_stats': p2_stats,
-#         'selected_format': selected_format
-#     })
-
-# def compare_players(request):
-#     p1 = None
-#     p2 = None
-#     p1_stats = None
-#     p2_stats = None
-    
-#     form = ComparePlayersForm(request.GET or None)
-#     selected_format = request.GET.get('format', 'odi').strip()
-
-#     if form.is_valid():
-#         p1 = form.cleaned_data['player1']
-#         p2 = form.cleaned_data['player2']
-        
-#         # DEBUG PRINTS: Check these in your terminal!
-#         print(f"--- DLS DEBUG ---")
-#         print(f"Player 1: {p1} (ID: {p1.id if p1 else 'None'})")
-#         print(f"Format: '{selected_format}'")
-
-#         # Try a broader search to see if ANYTHING exists for this player
-#         p1_stats = BattingStat.objects.filter(player=p1, format__icontains=selected_format).first()
-        
-#         # If still None, check if stats exist AT ALL for this player
-#         if not p1_stats:
-#             all_stats = BattingStat.objects.filter(player=p1)
-#             print(f"Stats found for this player in other formats: {[s.format for s in all_stats]}")
-
-#         p2_stats = BattingStat.objects.filter(player=p2, format__icontains=selected_format).first()
-
-#     return render(request, 'stats/compare.html', {
-#         'form': form,
-#         'p1': p1, 
-#         'p2': p2,
-#         'p1_stats': p1_stats,
-#         'p2_stats': p2_stats,
-#         'selected_format': selected_format
-#     })
 
 def compare_players(request):
     p1 = None

@@ -38,7 +38,17 @@ class Command(BaseCommand):
                         'average': float(row['ave']) if row['ave'] and row['ave'] != '-' else None,
                         'strike_rate': float(row['sr']) if row['sr'] and row['sr'] != '-' else None,
                         'innings':int(row['inns']) if row['inns'] else 0,
+                        'centuries': int(row['100']) if row['100'] else 0,
+                        'half_centuries': int(row['50']) if row['50'] else 0,
+                        'ducks':int(row['ducks']) if row['ducks'] else 0,
+                       'highest_score': str(row.get('hs')) if row.get('hs') else '0',
+                       'bowls_faced':int(row['bf']) if row['bf'] else 0,
+                       'fours':int(row['4s']) if row['4s'] else 0,
+                       'sixes':int(row['6s']) if row['6s'] else 0,
+                       'not_out':int(row['no']) if row['no'] else 0,
+                       'span':str(row.get('span')) if row.get('span') else '0',
                         'is_league': False
+                        
                     }
                 )
                 count += 1

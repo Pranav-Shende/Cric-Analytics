@@ -23,6 +23,14 @@ class BattingStat(models.Model):
     strike_rate = models.FloatField(null=True, blank=True)
     is_league = models.BooleanField(default=False) # To separate IPL from International
     rank = models.IntegerField(null=True, blank=True)
+    centuries = models.IntegerField(default=0, db_column='100')
+    half_centuries = models.IntegerField(default=0, db_column='50')
+    highest_score = models.CharField(max_length=10, default='0', blank=True, null=True)
+    ducks= models.IntegerField(default=0)
+    fours=models.IntegerField(default=0)
+    sixes=models.IntegerField(default=0)
+    not_out=models.IntegerField(default=0)
+    span= models.CharField(max_length=10, default='0', blank=True, null=True)
 
     def __str__(self):
         return f"{self.player.name} - {self.format}"
@@ -30,12 +38,19 @@ class BattingStat(models.Model):
 class BowlingStat(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='bowling_stats')
     format = models.CharField(max_length=10)  # Test, ODI, T20I
+    matches = models.IntegerField(default=0)
     innings = models.IntegerField(default=0)
     overs = models.FloatField(default=0.0)
     wickets = models.IntegerField(default=0)
     average = models.FloatField(null=True, blank=True)
     economy = models.FloatField(null=True, blank=True)
     best_bowling_figures = models.CharField(max_length=20, null=True, blank=True) # e.g., "5/19"
+    balls= models.IntegerField(default=0)
+    span=models.CharField(max_length=10, default='0', blank=True, null=True)
+    runs = models.IntegerField(default=0)
+    strike_rate = models.FloatField(null=True, blank=True)
+    four_wic=models.IntegerField(default=0)
+    five_wic= models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.player.name} - {self.format} Bowling"  
@@ -43,11 +58,13 @@ class BowlingStat(models.Model):
 class FieldingStat(models.Model):
     player = models.ForeignKey(Player, on_delete=models.CASCADE, related_name='fielding_stats')
     format = models.CharField(max_length=10)  # Test, ODI, T20I
+    matches = models.IntegerField(default=0)
     innings = models.IntegerField(default=0)
     catch = models.IntegerField(default=0.0)
     stump_out = models.IntegerField(default=0)
     dismisals = models.IntegerField(default=0)
     dismisals_per_inning = models.FloatField(null=True, blank=True)
+    span=models.CharField(max_length=10, default='0', blank=True, null=True)
 
     def __str__(self):
         return f"{self.player.name} - {self.format} Fielding"  

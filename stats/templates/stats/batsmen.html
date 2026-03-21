@@ -29,14 +29,19 @@
                         <th>Format</th>
                         <th class="text-center">Innings</th>
                         <th class="text-center">Runs</th>
+                        <th class="text-center">100</th>
+                        <th class="text-center">50</th>
                         <th class="text-center">Average</th>
+                        
                     </tr>
                 </thead>
                 <tbody id="batsmenGrid">
                     {% for stat in batsmen %}
-                    <tr class="player-item" 
+                    {# We merge all attributes into one single <tr> #}
+                    <tr class="player-item clickable-row" 
+                        data-href="{% url 'player_profile' stat.player.id %}" 
                         data-format="{{ stat.format|lower }}"
-                        style="display: none;">
+                        style="display: none; cursor: pointer;">
                         
                         <td class="ps-4 fw-bold">
                             <i class="bi bi-person-fill text-secondary me-2"></i>
@@ -48,19 +53,22 @@
                             </span>
                         </td>
                         <td class="text-center">{{ stat.innings|default:"0" }}</td>
-                        <td class="text-center fw-bold text-danger">{{ stat.runs }}</td>
+                        <td class="text-center fw-bold">{{ stat.runs }}</td>
+                        <td class="text-center fw-bold">{{ stat.centuries }}</td>
+                        <td class="text-center fw-bold">{{ stat.half_centuries }}</td>
+
                         <td class="text-center fw-bold">
                             {{ stat.average }}
                             {% if stat.average >= 50 %}
-                                <i class="bi bi-arrow-up-right-circle-fill text-success ms-1" title="Elite Average (50+)"></i>
+                                <i class="bi bi-star-fill text-warning ms-1" style="font-size: 0.8rem;" title="Elite Average (50+)"></i>
                             {% elif stat.average >= 40 %}
-                                <i class="bi bi-star-fill text-warning ms-1" style="font-size: 0.8rem;" title="Solid Average (40+)"></i>
+                                <i class="bi bi-arrow-up-right-circle-fill text-success ms-1" title="Solid Average (40+)"></i>
                             {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">No records found.</td>
+                        <td colspan="7" class="text-center py-5 text-muted">No records found.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -91,7 +99,7 @@
 
         rows.forEach(row => {
             const format = row.getAttribute('data-format') || "";
-            // Fuzzy match logic to bridge T20 and T20I
+            // Improved matching logic
             const matchesFormat = (formatVal === 'all' || format.includes(formatVal) || formatVal.includes(format));
 
             if (matchesFormat) {
@@ -107,7 +115,7 @@
             }
         });
 
-        // Determine button visibility based on filtered results
+        // Button logic
         const totalMatches = Array.from(rows).filter(r => {
             const rFormat = r.getAttribute('data-format') || "";
             return (formatVal === 'all' || rFormat.includes(formatVal) || formatVal.includes(rFormat));
@@ -117,19 +125,27 @@
         document.getElementById('noResults').style.display = foundAny ? "none" : "block";
     }
 
-    // Listener for format changes
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+        updateDisplay();
+
+        // Handle clicking the row
+        document.getElementById('batsmenGrid').addEventListener('click', (e) => {
+            const row = e.target.closest('.clickable-row');
+            if (row) {
+                window.location.href = row.dataset.href;
+            }
+        });
+    });
+
     document.getElementById('formatFilter').addEventListener('change', () => {
         visibleCount = 20; 
         updateDisplay();
     });
 
-    // Listener for pagination
     document.getElementById('loadMoreBtn').addEventListener('click', () => {
         visibleCount += increment;
         updateDisplay();
     });
-
-    // Initial trigger
-    document.addEventListener('DOMContentLoaded', updateDisplay);
 </script>
 {% endblock %}

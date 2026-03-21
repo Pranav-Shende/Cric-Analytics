@@ -69,6 +69,11 @@
                                 <td class="py-3 fw-bold">{{ p2_batting.runs|default:"-" }}</td>
                             </tr>
                             <tr class="bg-light">
+                                <td class="py-3 fw-bold">{{ p1_batting.strike_rate|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Strike Rate</td>
+                                <td class="py-3 fw-bold">{{ p2_batting.strike_rate|default:"-" }}</td>
+                            </tr>
+                            <tr class="bg-light">
                                 <td class="py-3 fw-bold">{{ p1_batting.average|default:"-" }}</td>
                                 <td class="small fw-bold text-muted text-uppercase">Average</td>
                                 <td class="py-3 fw-bold">{{ p2_batting.average|default:"-" }}</td>
@@ -103,6 +108,16 @@
                                 <td class="py-3 fw-bold">{{ p1_bowling.economy|default:"-" }}</td>
                                 <td class="small fw-bold text-muted text-uppercase">Economy</td>
                                 <td class="py-3 fw-bold">{{ p2_bowling.economy|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 fw-bold">{{ p1_bowling.average|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Average</td>
+                                <td class="py-3 fw-bold">{{ p2_bowling.average|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3 fw-bold">{{ p1_bowling.strike_rate|default:"-" }}</td>
+                                <td class="small fw-bold text-muted text-uppercase">Strike Rate</td>
+                                <td class="py-3 fw-bold">{{ p2_bowling.strike_rate|default:"-" }}</td>
                             </tr>
                         </tbody>
                     </table>
