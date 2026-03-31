@@ -91,60 +91,119 @@ def worlcup_live_data(request):
 
 #     return render(request, 'stats/live_score.html', {'matches': today_matches})
 
+#Changed due to api change
 # For only selected teams
+# def live_data(request):
+#     api_key = os.getenv("CRICKET_API_KEY") 
+#     api_url = f"https://api.cricapi.com/v1/currentMatches?apikey={api_key}&offset=0"
+
+#     # 1. List of International Countries
+#     INTERNATIONAL_TEAMS = [
+#         "INDIA", "AUSTRALIA", "PAKISTAN", "ENGLAND", "SOUTH AFRICA", 
+#         "NEW ZEALAND", "WEST INDIES", "SRI LANKA", "BANGLADESH", 
+#         "AFGHANISTAN", "IRELAND", "ZIMBABWE", "NEPAL", "NETHERLANDS"
+#     ]
+
+#     # 2. List of Big League Teams (IPL, BBL, etc.)
+#     LEAGUE_TEAMS = [
+#          "Mumbai Indians","Chennai Super Kings [CSK]","Royal Challengers Bangalore","Kolkata Knight Riders",
+#          "Gujarat Titans","Rajasthan Royals","Lucknow Super Giants","Delhi Capitals","Punjab Kings",
+#          "Sunrisers Hyderabad","Adelaide Strikers","Brisbane Heat","Hobart Hurricanes","Melbourne Renegades",
+#          "Melbourne Stars","Perth Scorchers","Sydney Sixers","Sydney Thunders"# Add more teams here
+#     ]
+
+#     try:
+#         response = requests.get(api_url)
+#         data = response.json()
+#         all_matches = data.get('data', [])
+#     except Exception as e:
+#         all_matches = []
+
+#     today = timezone.now().date().isoformat()
+#     filtered_matches = []
+
+#     for match in all_matches:
+#         match_date = match.get('dateTimeGMT') or match.get('date')
+        
+#         # Extract team names from the match name (e.g., "India vs Australia")
+#         # or from the 'teams' list if the API provides it.
+#         teams_list = match.get('teams', [])
+#         t1 = teams_list[0].upper() if len(teams_list) > 0 else ""
+#         t2 = teams_list[1].upper() if len(teams_list) > 1 else ""
+
+#         if match_date and match_date.startswith(today):
+            
+#             # Check if EITHER team is an International team OR a Big League team
+#             is_international = any(team in t1 or team in t2 for team in INTERNATIONAL_TEAMS)
+#             is_league = any(team in t1 or team in t2 for team in LEAGUE_TEAMS)
+
+#             if is_international or is_league:
+#                 scores = match.get('score', [])
+#                 match['t1_name'] = t1.title() # Convert back to 'India' from 'INDIA'
+#                 match['t2_name'] = t2.title()
+                
+#                 match['t1_score'] = scores[0] if len(scores) > 0 else None
+#                 match['t2_score'] = scores[1] if len(scores) > 1 else None
+                
+#                 filtered_matches.append(match)
+
+#     return render(request, 'stats/live_score.html', {'matches': filtered_matches})
 def live_data(request):
     api_key = os.getenv("CRICKET_API_KEY") 
     api_url = f"https://api.cricapi.com/v1/currentMatches?apikey={api_key}&offset=0"
 
-    # 1. List of International Countries
-    INTERNATIONAL_TEAMS = [
+    # Use shorter keywords to ensure matches (e.g., 'MUMBAI' instead of 'MUMBAI INDIANS')
+    ELITE_KEYWORDS = [
         "INDIA", "AUSTRALIA", "PAKISTAN", "ENGLAND", "SOUTH AFRICA", 
         "NEW ZEALAND", "WEST INDIES", "SRI LANKA", "BANGLADESH", 
-        "AFGHANISTAN", "IRELAND", "ZIMBABWE", "NEPAL", "NETHERLANDS"
-    ]
-
-    # 2. List of Big League Teams (IPL, BBL, etc.)
-    LEAGUE_TEAMS = [
-         "Mumbai Indians","Chennai Super Kings","Royal Challengers Bangalore","Kolkata Knight Riders",
-         "Gujarat Titans","Rajasthan Royals","Lucknow Super Giants","Delhi Capitals","Punjab Kings",
-         "Sunrisers Hyderabad","Adelaide Strikers","Brisbane Heat","Hobart Hurricanes","Melbourne Renegades",
-         "Melbourne Stars","Perth Scorchers","Sydney Sixers","Sydney Thunders"# Add more teams here
+        "AFGHANISTAN", "IRELAND", "ZIMBABWE", "NEPAL", "NETHERLANDS",
+        "MUMBAI Indians", "CHENNAI Super Kings", "Royal Challengers BANGALORE", "KOLKATA Knight Riders", "GUJARAT Titans", 
+        "RAJASTHAN Royals", "LUCKNOW Super Giants", "DELHI Capital", "PUNJAB Kings", "Sunrisers HYDERABAD"
+        
     ]
 
     try:
         response = requests.get(api_url)
         data = response.json()
         all_matches = data.get('data', [])
+        # print(f"DEBUG: API returned {len(all_matches)} matches total.") # Check Render logs
     except Exception as e:
         all_matches = []
 
-    today = timezone.now().date().isoformat()
     filtered_matches = []
 
+    def format_score_dict(s_list, index):
+        if not s_list or len(s_list) <= index:
+            return "Yet to bat"
+        s = s_list[index]
+        # Handle the new dictionary format: {'r': 198, 'w': 10, 'o': 76.4}
+        runs = s.get('r', 0)
+        wickets = s.get('w', 10)
+        overs = s.get('o', 0)
+        return f"{runs}/{wickets} ({overs})"
+
     for match in all_matches:
-        match_date = match.get('dateTimeGMT') or match.get('date')
+        match_name = match.get('name', '').upper()
         
-        # Extract team names from the match name (e.g., "India vs Australia")
-        # or from the 'teams' list if the API provides it.
-        teams_list = match.get('teams', [])
-        t1 = teams_list[0].upper() if len(teams_list) > 0 else ""
-        t2 = teams_list[1].upper() if len(teams_list) > 1 else ""
+        # Check if this match contains ANY of our elite keywords
+        is_important = any(word in match_name for word in ELITE_KEYWORDS)
 
-        if match_date and match_date.startswith(today):
+        if is_important:
+            scores_data = match.get('score', [])
+            teams = match.get('teams', ['T1', 'T2'])
             
-            # Check if EITHER team is an International team OR a Big League team
-            is_international = any(team in t1 or team in t2 for team in INTERNATIONAL_TEAMS)
-            is_league = any(team in t1 or team in t2 for team in LEAGUE_TEAMS)
-
-            if is_international or is_league:
-                scores = match.get('score', [])
-                match['t1_name'] = t1.title() # Convert back to 'India' from 'INDIA'
-                match['t2_name'] = t2.title()
-                
-                match['t1_score'] = scores[0] if len(scores) > 0 else None
-                match['t2_score'] = scores[1] if len(scores) > 1 else None
-                
-                filtered_matches.append(match)
+            # Use .get() to avoid index errors if teams list is short
+            match['t1_name'] = teams[0] if len(teams) > 0 else "Team 1"
+            match['t2_name'] = teams[1] if len(teams) > 1 else "Team 2"
+            
+            match['t1_score'] = format_score_dict(scores_data, 0)
+            match['t2_score'] = format_score_dict(scores_data, 1)
+            
+            # Status and Venue for better UI
+            match['current_status'] = match.get('status', 'Scheduled')
+            match['match_venue'] = match.get('venue', 'Unknown Venue')
+            
+            filtered_matches.append(match)
 
     return render(request, 'stats/live_score.html', {'matches': filtered_matches})
 

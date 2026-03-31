@@ -8,7 +8,7 @@ python manage.py collectstatic --noinput
 
 python manage.py migrate
 #python manage.py loaddata cricket_data.json
-python manage.py load_cricket_data_batting
-python manage.py load_cricket_data_bowling
-python manage.py load_cricket_data_fielding
+# python manage.py load_cricket_data_batting
+# python manage.py load_cricket_data_bowling
+# python manage.py load_cricket_data_fielding
 

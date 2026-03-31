@@ -6,7 +6,7 @@
         <h2 class="fw-bold text-uppercase" style="color: #1a3a5a; letter-spacing: 2px;">
             <i class="bi bi-broadcast text-danger me-2"></i>Live Match Feed
         </h2>
-        <p class="text-muted">Real-time updates for {{ today }}</p>
+        <p class="text-muted">Real-time updates for major International & League matches</p>
     </div>
 </div>
 
@@ -16,38 +16,36 @@
         <div class="card h-100 border-0 shadow-sm" style="border-top: 5px solid #1a3a5a !important;">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge bg-danger animate-pulse">LIVE</span>
-                    <small class="text-muted fw-bold">{{ match.matchType|upper }}</small>
+                    {% if "Yet to bat" in match.t1_score and "Yet to bat" in match.t2_score %}
+                        <span class="badge bg-secondary">UPCOMING</span>
+                    {% else %}
+                        <span class="badge bg-danger animate-pulse">LIVE</span>
+                    {% endif %}
+                    <small class="text-muted fw-bold">{{ match.matchType|upper|default:"T20" }}</small>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 fw-bold">{{ match.t1_name }}</h5>
+                    <h5 class="mb-0 fw-bold" style="max-width: 60%;">{{ match.t1_name }}</h5>
                     <div class="text-end">
-                        {% if match.t1_score %}
-                            <span class="fw-bold fs-5 text-primary">{{ match.t1_score.r }}/{{ match.t1_score.w }}</span>
-                            <div class="small text-muted">{{ match.t1_score.o }} ov</div>
-                        {% else %}
-                            <span class="text-muted small italic">Yet to bat</span>
-                        {% endif %}
+                        <span class="fw-bold fs-5 text-primary">{{ match.t1_score }}</span>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 fw-bold">{{ match.t2_name }}</h5>
+                    <h5 class="mb-0 fw-bold" style="max-width: 60%;">{{ match.t2_name }}</h5>
                     <div class="text-end">
-                        {% if match.t2_score %}
-                            <span class="fw-bold fs-5 text-primary">{{ match.t2_score.r }}/{{ match.t2_score.w }}</span>
-                            <div class="small text-muted">{{ match.t2_score.o }} ov</div>
-                        {% else %}
-                            <span class="text-muted small italic">Yet to bat</span>
-                        {% endif %}
+                        <span class="fw-bold fs-5 text-primary">{{ match.t2_score }}</span>
                     </div>
                 </div>
 
                 <hr class="my-3">
+                
                 <div class="p-2 bg-light rounded">
-                    <p class="card-text small text-dark fw-bold mb-0">
-                        <i class="bi bi-info-circle-fill text-primary me-1"></i>{{ match.status }}
+                    <p class="card-text small text-dark fw-bold mb-1">
+                        <i class="bi bi-info-circle-fill text-primary me-1"></i>{{ match.current_status }}
+                    </p>
+                    <p class="card-text x-small text-muted mb-0">
+                        <i class="bi bi-geo-alt-fill me-1"></i>{{ match.match_venue }}
                     </p>
                 </div>
             </div>
@@ -57,8 +55,8 @@
     <div class="col-12 text-center py-5">
         <div class="card p-5 bg-white shadow-sm mx-auto" style="max-width: 500px;">
             <i class="bi bi-calendar-x display-1 text-muted"></i>
-            <h4 class="mt-3">No matches scheduled for today</h4>
-            <p class="text-muted">Check back tomorrow for more live action!</p>
+            <h4 class="mt-3">No major matches found</h4>
+            <p class="text-muted">The big teams are taking a breather. Check back during IPL or International series!</p>
         </div>
     </div>
     {% endfor %}
@@ -72,6 +70,9 @@
     }
     .animate-pulse {
         animation: pulse 2s infinite ease-in-out;
+    }
+    .x-small {
+        font-size: 0.75rem;
     }
 </style>
 {% endblock %}
