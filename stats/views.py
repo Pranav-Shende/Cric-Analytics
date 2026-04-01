@@ -189,6 +189,7 @@ def live_data(request):
         is_important = any(word in match_name for word in ELITE_KEYWORDS)
 
         if is_important:
+            
             scores_data = match.get('score', [])
             teams = match.get('teams', ['T1', 'T2'])
             
@@ -203,6 +204,8 @@ def live_data(request):
             match['current_status'] = match.get('status', 'Scheduled')
             match['match_venue'] = match.get('venue', 'Unknown Venue')
             
+            search_query = f"{match['t1_name']} vs {match['t2_name']} live scorecard google".replace(" ", "+")
+            match['external_link'] = f"https://www.google.com/search?q={search_query}"
             filtered_matches.append(match)
 
     return render(request, 'stats/live_score.html', {'matches': filtered_matches})

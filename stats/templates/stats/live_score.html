@@ -13,10 +13,12 @@
 <div class="row g-4">
     {% for match in matches %}
     <div class="col-md-6 col-lg-4">
-        <div class="card h-100 border-0 shadow-sm" style="border-top: 5px solid #1a3a5a !important;">
+        <div class="card h-100 border-0 shadow-sm position-relative card-hover" style="border-top: 5px solid #1a3a5a !important; transition: transform 0.2s;">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    {% if "Yet to bat" in match.t1_score and "Yet to bat" in match.t2_score %}
+                    {% if "won" in match.current_status %}
+                        <span class="badge bg-primary">Ended</span>
+                    {% elif "Yet to bat" in match.t1_score and "Yet to bat" in match.t2_score %}
                         <span class="badge bg-secondary">UPCOMING</span>
                     {% else %}
                         <span class="badge bg-danger animate-pulse">LIVE</span>
@@ -40,13 +42,19 @@
 
                 <hr class="my-3">
                 
-                <div class="p-2 bg-light rounded">
+                <div class="p-2 bg-light rounded mb-2">
                     <p class="card-text small text-dark fw-bold mb-1">
                         <i class="bi bi-info-circle-fill text-primary me-1"></i>{{ match.current_status }}
                     </p>
-                    <p class="card-text x-small text-muted mb-0">
+                    <p class="card-text x-small text-danger mb-0">
                         <i class="bi bi-geo-alt-fill me-1"></i>{{ match.match_venue }}
                     </p>
+                </div>
+
+                <a href="{{ match.external_link }}" target="_blank" class="stretched-link"></a>
+                
+                <div class="text-center">
+                    <small class="text-primary fw-bold" style="font-size: 0.7rem;">Click for full scorecard <i class="bi bi-arrow-up-right"></i></small>
                 </div>
             </div>
         </div>
@@ -63,6 +71,13 @@
 </div>
 
 <style>
+    /* Add a slight hover effect so users know it's clickable */
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+        cursor: pointer;
+    }
+
     @keyframes pulse {
         0% { opacity: 1; transform: scale(1); }
         50% { opacity: 0.7; transform: scale(0.95); }
