@@ -161,15 +161,21 @@ CSRF_TRUSTED_ORIGINS = ['https://cric-analytics.onrender.com']
 import dj_database_url
 import os
 
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # This tells Django: "Use the Render database if available, 
+#         # otherwise use my local connection string."
+#         default=os.getenv('DATABASE_URL', 'postgresql://postgres:pranav@localhost:5432/cricket_local')
+#     )
+# }
+#
 DATABASES = {
     'default': dj_database_url.config(
-        # This tells Django: "Use the Render database if available, 
-        # otherwise use my local connection string."
-        default=os.getenv('DATABASE_URL', 'postgresql://postgres:pranav@localhost:5432/cricket_local')
+        default=os.getenv('DATABASE_URL', 'postgresql://postgres:pranav@localhost:5432/cricket_local'),
+        conn_max_age=600, # Keeps connections efficient on Supabase
+        ssl_require=True   # Ensures Render can talk to Supabase securely
     )
 }
-#
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
