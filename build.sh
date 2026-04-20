@@ -11,4 +11,4 @@ python manage.py collectstatic --noinput
 # python manage.py load_cricket_data_batting
 # python manage.py load_cricket_data_bowling
 # python manage.py load_cricket_data_fielding
-python manage.py scrape_ipl
+# python manage.py scrape_ipl

@@ -432,7 +432,7 @@ def ipl_standing(request):
 
 
 
-# Cron job
+# For Cron Job
 
 from django.core.management import call_command
 from django.http import HttpResponse, HttpResponseForbidden
