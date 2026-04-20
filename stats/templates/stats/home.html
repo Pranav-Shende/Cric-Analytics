@@ -152,42 +152,55 @@
 
     <hr class="my-5 opacity-10">
 
-    <div class="row g-4 mb-5">
-         <div class="col-md-4">
-            <a href="{% url 'live_score' %}" class="text-decoration-none">
-                <div class="card h-100 border-0 shadow-sm hover-up text-center p-3" style="border-radius: 20px;">
-                    <div class="card-body">
-                        <i class="bi bi-broadcast text-danger display-5 mb-3"></i>
-                        <h5 class="fw-bold">Live Feed</h5>
-                        <p class="text-muted small">Real-time match data.</p>
-                    </div>
+<div class="row row-cols-1 row-cols-md-4 g-4 mb-5">
+    <div class="col">
+        <a href="{% url 'live_score' %}" class="text-decoration-none">
+            <div class="card h-100 border-0 shadow-sm hover-up text-center p-3" style="border-radius: 20px;">
+                <div class="card-body">
+                    <i class="bi bi-broadcast text-danger display-5 mb-3"></i>
+                    <h5 class="fw-bold">Live Feed</h5>
+                    <p class="text-muted small">Real-time match data.</p>
                 </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="{% url 'compare_players' %}" class="text-decoration-none">
-                <div class="card h-100 border-0 shadow-sm hover-up p-3" style="border-radius: 20px;">
-                    <div class="card-body text-center">
-                        <i class="bi bi-people-fill text-primary fs-1 mb-3"></i>
-                        <h5 class="fw-bold">Head-to-Head</h5>
-                        <p class="text-muted small">Compare stats side-by-side</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <a href="{% url 'dls_calculator' %}" class="text-decoration-none">
-                <div class="card h-100 border-0 shadow-sm hover-up p-3" style="border-radius: 20px;">
-                    <div class="card-body text-center">
-                        <i class="bi bi-calculator-fill text-info fs-1 mb-3"></i>
-                        <h5 class="fw-bold">DLS Calculator</h5>
-                        <p class="text-muted small">Official target recalibration</p>
-                    </div>
-                </div>
-            </a>
-        </div>
+            </div>
+        </a>
     </div>
 
+    <div class="col">
+        <a href="{% url 'compare_players' %}" class="text-decoration-none">
+            <div class="card h-100 border-0 shadow-sm hover-up p-3" style="border-radius: 20px;">
+                <div class="card-body text-center">
+                    <i class="bi bi-people-fill text-primary fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Head-to-Head</h5>
+                    <p class="text-muted small">Compare stats side-by-side</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col">
+        <a href="{% url 'dls_calculator' %}" class="text-decoration-none">
+            <div class="card h-100 border-0 shadow-sm hover-up p-3" style="border-radius: 20px;">
+                <div class="card-body text-center">
+                    <i class="bi bi-calculator-fill text-info fs-1 mb-3"></i>
+                    <h5 class="fw-bold">DLS Calculator</h5>
+                    <p class="text-muted small">Official target recalibration</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col">
+        <a href="{% url 'icc_ranking' %}" class="text-decoration-none">
+            <div class="card h-100 border-0 shadow-sm hover-up p-3" style="border-radius: 20px;">
+                <div class="card-body text-center">
+                    <i class="bi bi-bar-chart-fill text-success fs-1 mb-3"></i>
+                    <h5 class="fw-bold">ICC Ranking</h5>
+                    <p class="text-muted small">Official ICC palyer ranking</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 20px; background-color: var(--card-bg);">
@@ -200,9 +213,8 @@
                             <h5 class="fw-bold">Tournament Hubs</h5>
                             <div class="d-flex gap-2 mt-3">
                                 <a href="{% url 'ipl_data' %}" class="btn btn-sm btn-outline-danger">IPL Live</a>
+                                <a href="{% url 'ipl_standing' %}" class="btn btn-sm btn-outline-danger">IPL Points Table</a>
                                 <a href="{% url 'world_cup_data' %}" class="btn btn-sm btn-outline-danger">World Cup</a>
-                                <a href="{% url 'icc_ranking' %}" class="btn btn-sm btn-outline-danger">ICC Official Ranking</a>
-
                             </div>
                         </div>
                     </div>
@@ -210,20 +222,20 @@
             </div>
         </div>
         <div class="col-md-6">
-            <a href="{% url 'laws_list' %}" class="text-decoration-none">
-                <div class="card border-0 shadow-sm h-100 bg-dark text-white" style="border-radius: 20px;">
-                    <div class="card-body d-flex align-items-center p-4">
-                        <i class="bi bi-book-half text-warning fs-2 me-3"></i>
-                        <div>
-                            <h5 class="fw-bold mb-0">Official Laws of Cricket</h5>
-                            <p class="small opacity-75 mb-0">Study all 42 laws of the game</p>
-                        </div>
-                        <i class="bi bi-chevron-right ms-auto"></i>
-                    </div>
+    <a href="{% url 'laws_list' %}" class="text-decoration-none">
+        <div class="card border-0 shadow-sm h-100 animate-hover" 
+             style="border-radius: 20px; background-color: var(--card-bg); color: var(--text-main);">
+            <div class="card-body d-flex align-items-center p-4">
+                <i class="bi bi-book-half text-warning fs-2 me-3"></i>
+                <div>
+                    <h5 class="fw-bold mb-0 text-body">Official Laws of Cricket</h5>
+                    <p class="small opacity-75 mb-0 text-body">Study all 42 laws of the game</p>
                 </div>
-            </a>
+                <i class="bi bi-chevron-right ms-auto text-body"></i>
+            </div>
         </div>
-    </div>
+    </a>
+</div>
 <!-- </div><div class="d-flex flex-wrap gap-2 mt-3">
     
     <a href="https://www.hotstar.com/in/sports/cricket" target="_blank" class="btn btn-sm btn-primary px-3 rounded-pill fw-bold">

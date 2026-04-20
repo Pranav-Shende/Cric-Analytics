@@ -1,0 +1,133 @@
+{% extends 'stats/base.html' %}
+
+{% block content %}
+<div class="container mt-4 pb-5">
+    <div class="text-center mb-5 animate-fade-in">
+        <h2 class="fw-bold text-uppercase" style="color: var(--brand-navy); letter-spacing: 2px;">
+            <i class="bi bi-grid-3x3-gap-fill text-warning me-2"></i>IPL 2026 Standings
+        </h2>
+        <p class="text-muted small">Live Points Table • Updated: {{ last_updated }}</p>
+    </div>
+
+<div class="card ranking-card shadow-sm border-0">
+    <div class="table-responsive p-3">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr class="text-uppercase">
+                    <th class="text-center rounded-start" style="width: 80px;">Pos</th>
+                    <th>Team</th>
+                    <th class="text-center">P</th>
+                    <th class="text-center">W</th>
+                    <th class="text-center">L</th>
+                    <th class="text-center">Pts</th>
+                    <th class="text-center">NRR</th>
+                    <th class="text-center rounded-end">Form</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in standings %}
+                <tr>
+                    <td class="text-center">
+                        <div class="pos-circle mx-auto">
+                            {{ row.POS }}
+                        </div>
+                    </td>
+                    
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <span class="fw-bold text-body" style="font-size: 1.1rem;">
+                                {{ row.TEAMS }}
+                            </span>
+                        </div>
+                    </td>
+
+                    <td class="text-center fw-semibold text-body">{{ row.M }}</td>
+                    <td class="text-center text-success fw-bold">{{ row.W }}</td>
+                    <td class="text-center text-danger fw-bold">{{ row.L }}</td>
+                    
+                    <td class="text-center">
+                        <span class="badge px-3 py-2 rounded-pill" style="font-size: 0.9rem; background-color: var(--brand-navy) !important; color: #fff !important;">
+                            {{ row.PTS }}
+                        </span>
+                    </td>
+
+                    <td class="text-center fw-bold {% if '-' in row.NRR|slugify %}text-danger{% else %}text-success{% endif %}">
+    {{ row.NRR }}
+</td>
+
+                    <!-- <td class="text-center">
+                        <div class="d-flex justify-content-center gap-1">
+                            {% for result in row.SERIES_FORM %}
+                                {% if result == 'W' %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle" style="width: 24px;">W</span>
+                                {% elif result == 'L' %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="width: 24px;">L</span>
+                                {% else %}
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" style="width: 24px;">{{ result }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </td> -->
+                    <td class="text-center">
+    <div class="d-flex justify-content-center gap-1">
+        {% for result in row.SERIES_FORM %}
+            {% if result == 'W' %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle" style="width: 24px;">W</span>
+            {% elif result == 'L' %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle" style="width: 24px;">L</span>
+            {% elif result == 'NR' %}
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" style="width: 32px;">NR</span>
+            {% else %}
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" style="width: 24px;">{{ result }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    
+<style>
+    /* Reuse your ICC page styles for perfect consistency */
+    .ranking-card { 
+        border-radius: 20px; 
+        background-color: var(--card-bg); 
+        overflow: hidden;
+    }
+    
+    .table thead th { 
+        background-color: var(--brand-navy); 
+        color: white; 
+        border: none; 
+        font-size: 0.75rem; 
+        padding: 15px 10px;
+    }
+
+    .pos-circle { 
+        width: 32px; 
+        height: 32px; 
+        background: var(--brand-gold) !important; 
+        color: #000 !important; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        border-radius: 50%; 
+        font-weight: 800; 
+        font-size: 0.85rem; 
+    }
+
+    /* Hover effect for rows */
+    .table tbody tr:hover {
+        background-color: rgba(26, 58, 90, 0.03);
+        transition: background-color 0.2s ease;
+    }
+
+    [data-bs-theme="dark"] .table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+</style>
+{% endblock %}

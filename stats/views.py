@@ -10,12 +10,13 @@ from django.shortcuts import render, get_object_or_404
 from .forms import ComparePlayersForm
 from .forms import DLSCalculatorForm
 from .dls import dls_pre_first_innings, dls_mid_first_innings, dls_pre_second_innings, dls_mid_second_innings
-import json
-import os
 from django.conf import settings
 from django.shortcuts import render
 from dotenv import load_dotenv
-
+import pandas as pd
+import json
+import os
+import re
 load_dotenv()
 
 # Load once at the top level of views.py (runs once on startup)
@@ -368,3 +369,83 @@ def dls_calculator(request):
             result = {"error": str(e)}
 
     return render(request, 'stats/dls.html', {'form': form, 'result': result, 'scenario': scenario})
+
+
+# def ipl_standing(request):
+#     try:
+#         # Read the latest scraped data
+#         df = pd.read_csv('ipl_points_latest.csv')
+        
+#         # Convert to a list of dictionaries
+#         standings_data = df.to_dict(orient='records')
+        
+#         # Get the last updated time from the first row
+#         last_updated = df['SCRAPED_AT'].iloc[0] if not df.empty else "N/A"
+        
+#         context = {
+#             'standings': standings_data,
+#             'last_updated': last_updated
+#         }
+#         return render(request, 'stats/standings.html', context)
+#     except FileNotFoundError:
+#         return render(request, 'stats/standings.html', {'error': 'No data available yet.'})
+
+import pandas as pd
+from django.shortcuts import render
+import re
+
+def ipl_standing(request):
+    try:
+        df = pd.read_csv('ipl_points_latest.csv')
+        
+        # 1. Fix the POS and TEAMS columns
+        if 'TEAMS' in df.columns:
+            # Step A: Extract the leading digits from TEAMS and put them into POS
+            # This handles strings like "1Punjab Kings" or "10Mumbai Indians"
+            df['POS'] = df['TEAMS'].apply(lambda x: re.findall(r'^\d+', str(x))[0] if re.findall(r'^\d+', str(x)) else "N/A")
+            
+            # Step B: Now remove those digits from the TEAMS column
+            df['TEAMS'] = df['TEAMS'].apply(lambda x: re.sub(r'^\d+', '', str(x)).strip())
+
+        # 2. Fix the 'SERIES_FORM' for "NR" logic
+        if 'SERIES_FORM' in df.columns:
+            def clean_form(form_str):
+                # Standardize to "NR" and remove spaces
+                cleaned = str(form_str).replace('N R', 'NR').replace(' ', '')
+                # Split but keep "NR" as one unit
+                return re.findall(r'NR|[WLD]', cleaned)
+            
+            df['SERIES_FORM'] = df['SERIES_FORM'].apply(clean_form)
+
+        standings_data = df.to_dict(orient='records')
+        last_updated = df['SCRAPED_AT'].iloc[0] if not df.empty else "N/A"
+        
+        context = {
+            'standings': standings_data,
+            'last_updated': last_updated
+        }
+        return render(request, 'stats/ipl_standing.html', context)
+
+    except (FileNotFoundError, pd.errors.EmptyDataError):
+        return render(request, 'stats/ipl_standing.html', {'error': 'Data not found.'})
+    
+
+
+
+# Cron job
+
+from django.core.management import call_command
+from django.http import HttpResponse, HttpResponseForbidden
+
+def trigger_scraper(request):
+    # Security: Use a secret key in the URL so strangers can't spam your scraper
+    secret_key = request.GET.get('key')
+    if secret_key != "your_very_secret_password_123":
+        return HttpResponseForbidden("Invalid Secret Key")
+
+    try:
+        # This runs the 'python manage.py scrape_ipl' command internally
+        call_command('scrape_ipl')
+        return HttpResponse("Scraper executed successfully!")
+    except Exception as e:
+        return HttpResponse(f"Scraper failed: {str(e)}", status=500)

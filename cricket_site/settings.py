@@ -169,11 +169,22 @@ import os
 #     )
 # }
 #
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         conn_max_age=600,
+#         # This will only require SSL if we are NOT on your local machine
+#         ssl_require=os.environ.get('RENDER') is not None
+#     )
+# }
+LOCAL_DATABASE_URL = 'postgresql://postgres:pranav@localhost:5432/cricket_local'
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', 'postgresql://postgres:pranav@localhost:5432/cricket_local'),
-        conn_max_age=600, # Keeps connections efficient on Supabase
-        ssl_require=True   # Ensures Render can talk to Supabase securely
+        default=LOCAL_DATABASE_URL,
+        conn_max_age=600,
+        # Only require SSL when running on Render (where 'RENDER' env var exists)
+        ssl_require=os.environ.get('RENDER') is not None
     )
 }
 # DATABASES = {

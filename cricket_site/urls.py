@@ -55,6 +55,8 @@ urlpatterns = [
     path('player/<int:player_id>/', player_profile, name='player_profile'),
     path('compare/', compare_players, name='compare_players'),
     path('dls/', dls_calculator, name='dls_calculator'),
+    path('ipl_standing/',ipl_standing,name='ipl_standing'),
+    path('run-secret-scraper-123/', trigger_scraper, name='trigger_scraper'),
 ]
 
 if settings.DEBUG:
