@@ -45,9 +45,12 @@ class Command(BaseCommand):
             # Standardize Column Names
             df.columns = [c.upper().replace(' ', '_').strip() for c in df.columns]
             if 'POS' in df.columns:
-                df = df[df['POS'].apply(lambda x: str(x).strip().isdigit())]
+                # df = df[df['POS'].apply(lambda x: str(x).strip().isdigit())]
+                # file_path = os.path.join(settings.BASE_DIR, 'ipl_points_latest.csv')
+                # df.to_csv(file_path, index=False)
                 file_path = os.path.join(settings.BASE_DIR, 'ipl_points_latest.csv')
                 df.to_csv(file_path, index=False)
+                self.stdout.write(self.style.SUCCESS(f"Saved to: {file_path}"))
             # Add Timestamp
             df["SCRAPED_AT"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             

@@ -395,8 +395,13 @@ from django.shortcuts import render
 import re
 
 def ipl_standing(request):
+    csv_path = os.path.join(settings.BASE_DIR, 'ipl_points_latest.csv')
+    
     try:
-        df = pd.read_csv('ipl_points_latest.csv')
+        # Check if file exists first to avoid crash
+        if not os.path.exists(csv_path):
+             return render(request, 'stats/ipl_standing.html', {'error': 'Data file not found.'})
+        df = pd.read_csv(csv_path)
         
         # 1. Fix the POS and TEAMS columns
         if 'TEAMS' in df.columns:
